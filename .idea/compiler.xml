@@ -10,6 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="st4-scfs-ref" target="16" />
       <module name="TestApplication" target="13" />
     </bytecodeTargetLevel>
   </component>

@@ -1,11 +1,13 @@
 import dk.sdu.mmmi.st4.scfs.sensors.CO2Sensor;
+import sensor.CO2SensorAdapter;
 import sensor.ISensor;
+import sensor.TemperatureSensorAdapter;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Server implements ISensor {
+public class Server2 implements ISensor {
 
     //geeksforgeeks ctrl+c, ctrl+v
     //https://www.geeksforgeeks.org/socket-programming-in-java/
@@ -14,16 +16,15 @@ public class Server implements ISensor {
     private Socket socket   = null;
     private ServerSocket server   = null;
 
-    private InputStreamReader in   = null;
-    private OutputStreamWriter out     = null;
-    private BufferedReader bufferedReader = null;
-    private BufferedWriter bufferedWriter = null;
+    private ObjectInputStream in   = null;
+    private ObjectOutputStream out     = null;
 
-    private static final CO2Sensor sensor = new CO2Sensor("co2");
+
+    private static final TemperatureSensorAdapter sensor = new TemperatureSensorAdapter("temp");
 
 
     // constructor with port
-    public Server(int port)
+    public Server2(int port)
     {
         // starts server and waits for a connection
         try
@@ -37,34 +38,29 @@ public class Server implements ISensor {
             System.out.println("Client accepted");
 
             // takes input from the client socket
-            out    = new OutputStreamWriter(socket.getOutputStream());
-            in = new InputStreamReader(socket.getInputStream());
-
-            bufferedReader = new BufferedReader(in);
-            bufferedWriter = new BufferedWriter(out);
+            out    = new ObjectOutputStream(socket.getOutputStream());
+            in = new ObjectInputStream(socket.getInputStream());
 
             String line = "";
 
-
-            System.out.println(line);
             // reads message from client until "Over" is sent
             while (!line.equals("Over"))
             {
                 System.out.println("WHile");
                 try
                 {
-                    line = bufferedReader.readLine();
+                    line = in.readUTF();
                     System.out.println(line + " Recieved");
-
-                    bufferedWriter.write("Server recieved: ");
-                    bufferedWriter.newLine();
-                    bufferedWriter.flush();
 
                     if(line.equals("value")){
                         getValue();
 
-                    }else if(line.equals("co2")){
+                    }else if(line.equals("name")){
                         getName();
+                    }else{
+                        line += " not understood";
+                        out.writeUTF(line);
+                        out.flush();
                     }
 
                 }
@@ -79,8 +75,6 @@ public class Server implements ISensor {
             // close connection
             socket.close();
             in.close();
-            bufferedWriter.close();
-            bufferedWriter.close();
             out.close();
         }
         catch(IOException i)
@@ -92,7 +86,7 @@ public class Server implements ISensor {
 
     public static void main(String args[])
     {
-        Server server = new Server(5000);
+        Server server = new Server(5001);
     }
 
     @Override
@@ -100,9 +94,8 @@ public class Server implements ISensor {
 
         try{
             System.out.println("Getting Name");
-            bufferedWriter.write(sensor.getId());
-            bufferedWriter.newLine();
-            bufferedWriter.flush();
+            out.writeUTF(sensor.getName());
+            out.flush();
 
         }catch (Exception e){
             System.out.println("Exception getName Server");
@@ -116,9 +109,8 @@ public class Server implements ISensor {
 
         try{
             System.out.println("Getting value");
-            bufferedWriter.write(sensor.getValue());
-            bufferedWriter.newLine();
-            bufferedWriter.flush();
+            out.writeUTF(sensor.getValue().toString());
+            out.flush();
 
         }catch (Exception e){
             System.out.println("Exception getValue Server");

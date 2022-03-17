@@ -3,11 +3,14 @@ package presentation;
 import domain.SensorSystem;
 import domain.SensorSystemImpl;
 
+import java.sql.SQLOutput;
 import java.util.Scanner;
 
 public class SensorSystemUI {
     public static void main(String[] args)
     {
+
+        System.out.println("Start UI");
         SensorSystem system = new SensorSystemImpl();
         Scanner scanner = new Scanner(System.in);
         while(true)
