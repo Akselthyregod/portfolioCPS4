@@ -1,5 +1,6 @@
 package sensor;
 
+
 import dk.sdu.mmmi.st4.scfs.sensors.TemperatureSensor;
 
 public class TemperatureSensorAdapter implements ISensor {
