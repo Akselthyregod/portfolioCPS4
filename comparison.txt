@@ -1,0 +1,10 @@
+In presendation layer the priamry difference is the way user input is processed.
+The difference is minor and functionally not different.
+
+However the way "dummy" obejcts are addded to the system are slightly different.
+Im my solution it is added in the presentation layer, whereas the reference adds it in the domain layer.
+
+My solution is a bit more ready for expansion, whereas the reference is hardcoding 1 of each sensor type in the facade.
+
+The sensor layers are almost identical.
+
